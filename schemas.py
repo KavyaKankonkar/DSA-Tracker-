@@ -7,7 +7,7 @@ class UserBase(BaseModel):
     email: EmailStr 
 
 class UserCreate(UserBase):
-    password :str =Field(min_length=8)
+    hashed_password :str =Field(min_length=8)
 
 class UserResponse(UserBase):
     model_config=ConfigDict(from_attributes=True)
@@ -23,7 +23,7 @@ class TokenData(BaseModel):
     user_id: int | None = None
 
 class TagBase(BaseModel):
-    name: str =Field(min_length=1,max_length=30)
+    name: str=Field(min_length=1,max_length=30) 
 
 class TagCreate(TagBase):
     pass
@@ -45,11 +45,10 @@ class PatternResponse(PatternBase):
 
 class ProblemBase(BaseModel):
     problem_name: str=Field(min_length=1,max_length=500)
-    pattern :str =Field(min_length=1,max_length=500)
 
 class ProblemCreate(ProblemBase):
     description: str =Field( min_length=1,max_length=500)
-    tags: list[int] =Field(default_factory=list)
+    tags_ids: list[int] =Field(default_factory=list)
     pattern_ids: list[int]  =Field(default_factory=list)
 
 class ProblemResponse(ProblemBase):
