@@ -45,9 +45,10 @@ class PatternResponse(PatternBase):
 
 class ProblemBase(BaseModel):
     problem_name: str=Field(min_length=1,max_length=500)
-
-class ProblemCreate(ProblemBase):
+    status: Literal['solved', 'failed', 'attempted'] | None = "attempted" 
     description: str =Field( min_length=1,max_length=500)
+    
+class ProblemCreate(ProblemBase):
     tags_ids: list[int] =Field(default_factory=list)
     pattern_ids: list[int]  =Field(default_factory=list)
 
@@ -58,6 +59,13 @@ class ProblemResponse(ProblemBase):
     created_at: datetime   
     tags: list[TagResponse]  
     patterns: list[PatternResponse]
+
+class ProblemUpdate(BaseModel):
+    problem_name: str | None = Field(default=None, min_length=1, max_length=500)
+    description: str | None = Field(default=None, min_length=1, max_length=500)
+    status: Literal['solved', 'failed', 'attempted'] | None = None 
+    tags_ids: list[int] | None = None
+    pattern_ids: list[int] | None = None
 
 class AttemptBase(BaseModel):
     problem_id:int

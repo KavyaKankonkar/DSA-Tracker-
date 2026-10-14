@@ -48,22 +48,23 @@ class Problem(Base):
     id = Column(Integer,primary_key=True)
     problem_name=Column(String,nullable=False)
     description= Column(String)
+    status = Column(String, nullable=True, default="attempted") 
     created_at =Column(DateTime(timezone=True),default =lambda : datetime.now(timezone.utc))
     user_id=Column(Integer,ForeignKey("users.id"),nullable=False)
     owner= relationship("User",back_populates="problems")
     tags=relationship("Tag",secondary=problem_tags,back_populates="problems")
     patterns=relationship("Pattern",secondary=problem_patterns,back_populates="problems")
-    attempts=relationship("Attempt",back_populates="problems")
+    attempts=relationship("Attempt",back_populates="problems",cascade="all, delete-orphan", passive_deletes=True)
     
 class Attempt(Base):
     __tablename__="attempts"
-    __table_args__ = (UniqueConstraint("user_id", "problem_id", name="uq_user_problem_attempt"),)
     id=Column(Integer,primary_key=True)
     time_taken=Column(Integer,nullable=True)
     status=Column(String,nullable=False)
     notes=Column(String)
     attempted_at=Column(DateTime(timezone=True),default=lambda:datetime.now(timezone.utc))
-    problem_id=Column(Integer,ForeignKey("problems.id"))
+    problem_id=Column(Integer,ForeignKey("problems.id",ondelete="CASCADE"))
     user_id=Column(Integer,ForeignKey("users.id"))
     problems=relationship("Problem",back_populates="attempts")
     user=relationship("User",back_populates="attempts")
+    
